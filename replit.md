@@ -109,8 +109,14 @@ StatResult: { name, wins, percentage, finalScore, cost, color, icon }
 
 ## Changelog
 
-Changelog:
-- July 01, 2025. Initial setup
+- July 01, 2025: Initial project setup and implementation
+- July 01, 2025: Successfully implemented complete D&D stat generator with working algorithm
+  - Built 90-question comparative quiz system
+  - Ported C++ stat calculation algorithm to TypeScript
+  - Fixed algorithm bug ensuring exactly 27 point totals
+  - Created engaging scenario-based questions for all stat pairings
+  - Implemented dark D&D-themed UI with progress tracking
+  - Validated algorithm produces legal D&D point-buy arrays
 
 ## User Preferences
 

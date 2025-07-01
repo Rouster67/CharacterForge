@@ -60,8 +60,6 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
   }
 
   // Adjust to make total cost exactly 27
-  console.log('Starting adjustment phase. Initial total cost:', totalCost);
-  
   while (totalCost !== 27) {
     let adjusted = false;
 
@@ -75,7 +73,6 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
           if (option.score > currentScore) {
             const costDiff = option.cost - currentCost;
             if (totalCost + costDiff <= 27) {
-              console.log(`Increasing stat ${i} from ${currentScore} (${currentCost}) to ${option.score} (${option.cost}). Total: ${totalCost} -> ${totalCost + costDiff}`);
               finalScores[i] = option.score;
               totalCost += costDiff;
               currentCosts[i] = option.cost;
@@ -93,7 +90,6 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
           if (option.score < currentScore) {
             const costDiff = currentCost - option.cost;
             if (totalCost - costDiff >= 27) {
-              console.log(`Decreasing stat ${i} from ${currentScore} (${currentCost}) to ${option.score} (${option.cost}). Total: ${totalCost} -> ${totalCost - costDiff}`);
               finalScores[i] = option.score;
               totalCost -= costDiff;
               currentCosts[i] = option.cost;
@@ -105,26 +101,15 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
       }
     }
 
-    if (!adjusted) {
-      console.log('No adjustments possible. Breaking with total cost:', totalCost);
-      break; // Failsafe to prevent infinite loop
-    }
+    if (!adjusted) break; // Failsafe to prevent infinite loop
   }
-  
-  console.log('Final adjustment phase. Total cost:', totalCost);
 
   return { scores: finalScores, costs: currentCosts, totalCost };
 }
 
 export function formatResults(statWins: number[]): StatResult[] {
-  const { scores, costs, totalCost } = generateStatSpread(statWins);
+  const { scores, costs } = generateStatSpread(statWins);
   const totalWins = statWins.reduce((sum, wins) => sum + wins, 0);
-
-  // Debug logging to help identify issues
-  console.log('StatWins:', statWins);
-  console.log('Generated scores:', scores);
-  console.log('Costs:', costs);
-  console.log('Total cost:', totalCost);
 
   return STAT_NAMES.map((name, index) => ({
     name,
