@@ -1,4 +1,4 @@
-# D&D Stat Generator - Comparative Quiz
+# CharacterForge - D&D Stat Generator
 
 A fair and personalized way to generate D&D ability scores through a 90-question comparative quiz system.
 
@@ -43,8 +43,8 @@ A fair and personalized way to generate D&D ability scores through a 90-question
 
 1. Clone the repository:
 ```bash
-git clone <your-repo-url>
-cd dnd-stat-generator
+git clone https://github.com/YOUR_USERNAME/CharacterForge.git
+cd CharacterForge
 ```
 
 2. Install dependencies:
