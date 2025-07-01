@@ -67,7 +67,7 @@ export function QuizScreen({
           <p className="text-slate-300">Choose the option that better reflects your character concept or personal preference</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-4">
           <Button
             variant="outline"
             onClick={() => onSelectOption(question.statA)}
