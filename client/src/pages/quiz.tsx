@@ -13,12 +13,14 @@ export default function Quiz() {
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [statWins, setStatWins] = useState<number[]>([0, 0, 0, 0, 0, 0]); // STR, DEX, CON, INT, WIS, CHA
+  const [expandedRange, setExpandedRange] = useState(false);
 
-  const startQuiz = () => {
+  const startQuiz = (useExpandedRange: boolean) => {
     const newQuestions = generateQuestions();
     setQuestions(newQuestions);
     setCurrentQuestionIndex(0);
     setStatWins([0, 0, 0, 0, 0, 0]);
+    setExpandedRange(useExpandedRange);
     setCurrentScreen('quiz');
   };
 
@@ -42,7 +44,7 @@ export default function Quiz() {
     setStatWins([0, 0, 0, 0, 0, 0]);
   };
 
-  const results = formatResults(statWins);
+  const results = formatResults(statWins, expandedRange);
   const totalCost = results.reduce((sum, stat) => sum + stat.cost, 0);
 
   if (currentScreen === 'welcome') {

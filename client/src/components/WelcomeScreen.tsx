@@ -1,11 +1,15 @@
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { useState } from 'react';
 
 interface WelcomeScreenProps {
-  onStartQuiz: () => void;
+  onStartQuiz: (expandedRange: boolean) => void;
 }
 
 export function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
+  const [expandedRange, setExpandedRange] = useState(false);
+
   return (
     <div className="container mx-auto px-4 py-8 max-w-4xl">
       <div className="text-center mb-12">
@@ -13,7 +17,7 @@ export function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
           <i className="fas fa-dice-d20 text-3xl text-white"></i>
         </div>
         <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-dnd-primary to-dnd-secondary bg-clip-text text-transparent">
-          D&D Stat Generator
+          CharacterForge
         </h1>
         <p className="text-xl text-slate-300 max-w-2xl mx-auto">
           A fair and personalized way to generate your D&D ability scores through comparative choices
@@ -80,9 +84,31 @@ export function WelcomeScreen({ onStartQuiz }: WelcomeScreenProps) {
         </Card>
       </div>
 
+      {/* Stat Range Option */}
+      <Card className="bg-dnd-surface p-6 border border-slate-700 mb-8 max-w-md mx-auto">
+        <div className="flex items-center space-x-3">
+          <Checkbox 
+            id="expanded-range" 
+            checked={expandedRange}
+            onCheckedChange={(checked) => setExpandedRange(checked === true)}
+          />
+          <label 
+            htmlFor="expanded-range" 
+            className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+          >
+            <div className="flex flex-col">
+              <span className="text-slate-200">Expand stat range from 8-15 to 6-16</span>
+              <span className="text-slate-400 text-xs mt-1">
+                {expandedRange ? 'Using expanded range (6-16)' : 'Using standard range (8-15)'}
+              </span>
+            </div>
+          </label>
+        </div>
+      </Card>
+
       <div className="text-center">
         <Button 
-          onClick={onStartQuiz}
+          onClick={() => onStartQuiz(expandedRange)}
           className="bg-dnd-primary hover:bg-dnd-primary/90 text-white font-semibold px-8 py-4 text-lg transition-all duration-200 transform hover:scale-105 shadow-lg"
         >
           <i className="fas fa-play mr-2"></i>

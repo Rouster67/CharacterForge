@@ -19,8 +19,8 @@ export const STAT_CONFIG = {
   CHA: { color: 'pink', icon: 'fa-crown', fullName: 'Charisma' }
 };
 
-// Main stat fitting function - improved algorithm for full 6-16 range
-export function generateStatSpread(statWins: number[]): { scores: number[], costs: number[], totalCost: number } {
+// Main stat fitting function - supports both 8-15 and 6-16 ranges
+export function generateStatSpread(statWins: number[], expandedRange: boolean = false): { scores: number[], costs: number[], totalCost: number } {
   const totalWins = statWins.reduce((sum, wins) => sum + wins, 0);
   
   // Sort stats by preference (highest wins first)
@@ -38,8 +38,8 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
     const statIndex = statIndices[rank];
     const wins = statWins[statIndex];
     
-    if (wins === 0) {
-      // No preference = minimum stat (6)
+    if (wins === 0 && expandedRange) {
+      // No preference = minimum stat (6) only if expanded range is enabled
       finalScores[statIndex] = 6;
       currentCosts[statIndex] = -2;
       totalCost -= 2;
@@ -49,20 +49,38 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
       const maxWins = Math.max(...statWins);
       const preferenceRatio = wins / maxWins;
       
-      // Map preference ratio to stat range (6-16)
+      // Map preference ratio to stat range
       let targetScore;
-      if (preferenceRatio >= 0.9) {
-        targetScore = 16; // Very high preference
-      } else if (preferenceRatio >= 0.7) {
-        targetScore = 15; // High preference  
-      } else if (preferenceRatio >= 0.5) {
-        targetScore = 14; // Medium-high preference
-      } else if (preferenceRatio >= 0.3) {
-        targetScore = 13; // Medium preference
-      } else if (preferenceRatio >= 0.15) {
-        targetScore = 12; // Low-medium preference
+      if (expandedRange) {
+        // Full 6-16 range
+        if (preferenceRatio >= 0.9) {
+          targetScore = 16; // Very high preference
+        } else if (preferenceRatio >= 0.7) {
+          targetScore = 15; // High preference  
+        } else if (preferenceRatio >= 0.5) {
+          targetScore = 14; // Medium-high preference
+        } else if (preferenceRatio >= 0.3) {
+          targetScore = 13; // Medium preference
+        } else if (preferenceRatio >= 0.15) {
+          targetScore = 12; // Low-medium preference
+        } else {
+          targetScore = 10; // Low preference
+        }
       } else {
-        targetScore = 10; // Low preference
+        // Standard 8-15 range
+        if (preferenceRatio >= 0.9) {
+          targetScore = 15; // Very high preference
+        } else if (preferenceRatio >= 0.7) {
+          targetScore = 14; // High preference  
+        } else if (preferenceRatio >= 0.5) {
+          targetScore = 13; // Medium-high preference
+        } else if (preferenceRatio >= 0.3) {
+          targetScore = 12; // Medium preference
+        } else if (preferenceRatio >= 0.15) {
+          targetScore = 11; // Low-medium preference
+        } else {
+          targetScore = 9; // Low preference
+        }
       }
       
       // Find the cost for this target score
@@ -128,8 +146,8 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
   return { scores: finalScores, costs: currentCosts, totalCost };
 }
 
-export function formatResults(statWins: number[]): StatResult[] {
-  const { scores, costs } = generateStatSpread(statWins);
+export function formatResults(statWins: number[], expandedRange: boolean = false): StatResult[] {
+  const { scores, costs } = generateStatSpread(statWins, expandedRange);
   const totalWins = statWins.reduce((sum, wins) => sum + wins, 0);
 
   return STAT_NAMES.map((name, index) => ({
