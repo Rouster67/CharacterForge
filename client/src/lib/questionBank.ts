@@ -60,7 +60,7 @@ const QUESTION_SCENARIOS: Record<string, Array<{
     },
     {
       optionA: { title: 'Athletic prowess', description: 'Dominate in tests of pure physical capability', icon: 'fa-medal' },
-      outionB: { title: 'Natural toughness', description: 'Resist poisons, diseases, and environmental hazards', icon: 'fa-leaf' }
+      optionB: { title: 'Natural toughness', description: 'Resist poisons, diseases, and environmental hazards', icon: 'fa-leaf' }
     },
     {
       optionA: { title: 'Moment of glory', description: 'Shine brightest in crucial, high-stakes moments', icon: 'fa-star' },
