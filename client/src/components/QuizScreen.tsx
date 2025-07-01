@@ -67,19 +67,21 @@ export function QuizScreen({
           <p className="text-slate-300">Choose the option that better reflects your character concept or personal preference</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-2 gap-6">
           <Button
             variant="outline"
             onClick={() => onSelectOption(question.statA)}
-            className={`group bg-slate-800 hover:bg-dnd-primary/20 border-2 border-slate-600 ${getStatBorderColor(question.statA)} h-auto p-6 text-left transition-all duration-200 transform hover:scale-105`}
+            className={`group bg-slate-800 hover:bg-dnd-primary/20 border-2 border-slate-600 ${getStatBorderColor(question.statA)} h-auto min-h-[200px] p-6 text-left transition-all duration-200 transform hover:scale-[1.02] flex flex-col justify-between`}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-dnd-primary uppercase tracking-wide">Option A</span>
-              <i className={`fas ${question.optionA.icon} text-dnd-primary opacity-50 group-hover:opacity-100 transition-opacity`}></i>
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-dnd-primary uppercase tracking-wide">Option A</span>
+                <i className={`fas ${question.optionA.icon} text-dnd-primary opacity-50 group-hover:opacity-100 transition-opacity`}></i>
+              </div>
+              <h3 className="text-lg font-semibold mb-3 text-white leading-tight">{question.optionA.title}</h3>
+              <p className="text-slate-300 text-sm mb-4 leading-relaxed line-clamp-4">{question.optionA.description}</p>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-white">{question.optionA.title}</h3>
-            <p className="text-slate-300 text-sm mb-4">{question.optionA.description}</p>
-            <div className="text-xs text-slate-400 bg-slate-700 px-3 py-1 rounded-full inline-block">
+            <div className="text-xs text-slate-400 bg-slate-700 px-3 py-1 rounded-full inline-block mt-auto">
               <i className={`fas ${STAT_CONFIG[question.statA].icon} mr-1`}></i>
               {STAT_CONFIG[question.statA].fullName} Focus
             </div>
@@ -88,15 +90,17 @@ export function QuizScreen({
           <Button
             variant="outline"
             onClick={() => onSelectOption(question.statB)}
-            className={`group bg-slate-800 hover:bg-dnd-secondary/20 border-2 border-slate-600 ${getStatBorderColor(question.statB)} h-auto p-6 text-left transition-all duration-200 transform hover:scale-105`}
+            className={`group bg-slate-800 hover:bg-dnd-secondary/20 border-2 border-slate-600 ${getStatBorderColor(question.statB)} h-auto min-h-[200px] p-6 text-left transition-all duration-200 transform hover:scale-[1.02] flex flex-col justify-between`}
           >
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-dnd-secondary uppercase tracking-wide">Option B</span>
-              <i className={`fas ${question.optionB.icon} text-dnd-secondary opacity-50 group-hover:opacity-100 transition-opacity`}></i>
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-sm font-medium text-dnd-secondary uppercase tracking-wide">Option B</span>
+                <i className={`fas ${question.optionB.icon} text-dnd-secondary opacity-50 group-hover:opacity-100 transition-opacity`}></i>
+              </div>
+              <h3 className="text-lg font-semibold mb-3 text-white leading-tight">{question.optionB.title}</h3>
+              <p className="text-slate-300 text-sm mb-4 leading-relaxed line-clamp-4">{question.optionB.description}</p>
             </div>
-            <h3 className="text-lg font-semibold mb-2 text-white">{question.optionB.title}</h3>
-            <p className="text-slate-300 text-sm mb-4">{question.optionB.description}</p>
-            <div className="text-xs text-slate-400 bg-slate-700 px-3 py-1 rounded-full inline-block">
+            <div className="text-xs text-slate-400 bg-slate-700 px-3 py-1 rounded-full inline-block mt-auto">
               <i className={`fas ${STAT_CONFIG[question.statB].icon} mr-1`}></i>
               {STAT_CONFIG[question.statB].fullName} Focus
             </div>
