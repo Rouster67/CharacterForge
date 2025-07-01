@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(249, 91%, 67%);
+  --primary-foreground: hsl(213, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+  
+  /* Custom D&D theme colors */
+  --dnd-primary: hsl(249, 91%, 67%);
+  --dnd-secondary: hsl(261, 83%, 58%);
+  --dnd-bg: hsl(225, 84%, 5%);
+  --dnd-surface: hsl(215, 28%, 17%);
+  --dnd-text: hsl(210, 40%, 98%);
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(249, 91%, 67%);
+  --primary-foreground: hsl(213, 100%, 99%);
+  --secondary: hsl(240, 3.7%, 15.9%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-dnd-bg text-dnd-text min-h-screen;
+  }
+}
+
+@layer utilities {
+  .bg-dnd-primary {
+    background-color: var(--dnd-primary);
+  }
+  
+  .bg-dnd-secondary {
+    background-color: var(--dnd-secondary);
+  }
+  
+  .bg-dnd-bg {
+    background-color: var(--dnd-bg);
+  }
+  
+  .bg-dnd-surface {
+    background-color: var(--dnd-surface);
+  }
+  
+  .text-dnd-text {
+    color: var(--dnd-text);
+  }
+  
+  .text-dnd-primary {
+    color: var(--dnd-primary);
+  }
+  
+  .text-dnd-secondary {
+    color: var(--dnd-secondary);
+  }
+}
