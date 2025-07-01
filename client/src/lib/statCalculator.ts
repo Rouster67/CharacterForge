@@ -98,14 +98,18 @@ export function generateStatSpread(statWins: number[], expandedRange: boolean = 
   while (totalCost !== 27 && remainingBudget !== 0) {
     let adjusted = false;
     
+    // Define valid range based on expandedRange setting
+    const minScore = expandedRange ? 6 : 8;
+    const maxScore = expandedRange ? 16 : 15;
+    
     // If under budget, increase stats (prioritize highest preference)
     if (totalCost < 27) {
       for (const statIndex of statIndices) {
         const currentScore = finalScores[statIndex];
         const currentCost = currentCosts[statIndex];
         
-        // Find next higher score option
-        const nextOption = STAT_TABLE.find(opt => opt.score > currentScore);
+        // Find next higher score option within valid range
+        const nextOption = STAT_TABLE.find(opt => opt.score > currentScore && opt.score <= maxScore);
         if (nextOption) {
           const costIncrease = nextOption.cost - currentCost;
           if (totalCost + costIncrease <= 27) {
@@ -125,11 +129,11 @@ export function generateStatSpread(statWins: number[], expandedRange: boolean = 
         const currentScore = finalScores[statIndex];
         const currentCost = currentCosts[statIndex];
         
-        // Find next lower score option
-        const prevOption = STAT_TABLE.slice().reverse().find(opt => opt.score < currentScore);
+        // Find next lower score option within valid range
+        const prevOption = STAT_TABLE.slice().reverse().find(opt => opt.score < currentScore && opt.score >= minScore);
         if (prevOption) {
           const costDecrease = currentCost - prevOption.cost;
-          if (totalCost - costDecrease >= 27) {
+          if (totalCost - costDecrease >= 0) {
             finalScores[statIndex] = prevOption.score;
             currentCosts[statIndex] = prevOption.cost;
             totalCost -= costDecrease;
