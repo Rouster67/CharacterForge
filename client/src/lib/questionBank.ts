@@ -420,6 +420,16 @@ const QUESTION_SCENARIOS: Record<string, Array<{
   ]
 };
 
+// Fisher-Yates shuffle for proper randomization
+function shuffleArray<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
 export function generateQuestions(): QuizQuestion[] {
   const questions: QuizQuestion[] = [];
   let questionId = 0;
@@ -431,17 +441,32 @@ export function generateQuestions(): QuizQuestion[] {
     
     if (scenarios) {
       scenarios.forEach((scenario) => {
-        questions.push({
-          id: questionId++,
-          statA,
-          statB,
-          optionA: scenario.optionA,
-          optionB: scenario.optionB
-        });
+        // Randomly determine if we should swap the answer positions
+        const shouldSwap = Math.random() < 0.5;
+        
+        if (shouldSwap) {
+          // Swap positions: optionA becomes optionB and vice versa
+          questions.push({
+            id: questionId++,
+            statA: statB,  // Swap stats too
+            statB: statA,
+            optionA: scenario.optionB,  // Option B becomes A
+            optionB: scenario.optionA   // Option A becomes B
+          });
+        } else {
+          // Keep original order
+          questions.push({
+            id: questionId++,
+            statA,
+            statB,
+            optionA: scenario.optionA,
+            optionB: scenario.optionB
+          });
+        }
       });
     }
   });
 
-  // Shuffle the questions to randomize order
-  return questions.sort(() => Math.random() - 0.5);
+  // Properly shuffle the questions using Fisher-Yates algorithm
+  return shuffleArray(questions);
 }
