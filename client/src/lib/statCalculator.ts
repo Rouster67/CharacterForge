@@ -19,91 +19,112 @@ export const STAT_CONFIG = {
   CHA: { color: 'pink', icon: 'fa-crown', fullName: 'Charisma' }
 };
 
-// Convert raw win distribution into target point weights
-function calculateTargetCosts(statWins: number[]): number[] {
-  const targets: number[] = [];
+// Main stat fitting function - improved algorithm for full 6-16 range
+export function generateStatSpread(statWins: number[]): { scores: number[], costs: number[], totalCost: number } {
   const totalWins = statWins.reduce((sum, wins) => sum + wins, 0);
   
-  for (let i = 0; i < 6; i++) {
-    const percentage = statWins[i] / totalWins;
-    targets[i] = percentage * 27.0;
-  }
+  // Sort stats by preference (highest wins first)
+  const statIndices = Array.from({length: 6}, (_, i) => i);
+  statIndices.sort((a, b) => statWins[b] - statWins[a]);
   
-  return targets;
-}
-
-// Main stat fitting function - direct port from C++ algorithm
-export function generateStatSpread(statWins: number[]): { scores: number[], costs: number[], totalCost: number } {
-  const targetCosts = calculateTargetCosts(statWins);
-  const finalScores = [8, 8, 8, 8, 8, 8]; // Initialize all to 8 (0 cost)
+  // Initialize all stats to 8 (0 cost baseline)
+  const finalScores = [8, 8, 8, 8, 8, 8];
   const currentCosts = [0, 0, 0, 0, 0, 0];
   let totalCost = 0;
-
-  // For each stat, find the best-fit score (closest to target cost)
-  for (let i = 0; i < 6; i++) {
-    let minDiff = 1000.0;
-    let bestScore = 8;
-    let bestCost = 0;
-
-    for (const option of STAT_TABLE) {
-      const diff = Math.abs(option.cost - targetCosts[i]);
-      if (diff < minDiff) {
-        minDiff = diff;
-        bestScore = option.score;
-        bestCost = option.cost;
+  let remainingBudget = 27;
+  
+  // Assign stats based on preference ranking
+  for (let rank = 0; rank < 6; rank++) {
+    const statIndex = statIndices[rank];
+    const wins = statWins[statIndex];
+    
+    if (wins === 0) {
+      // No preference = minimum stat (6)
+      finalScores[statIndex] = 6;
+      currentCosts[statIndex] = -2;
+      totalCost -= 2;
+      remainingBudget += 2;
+    } else {
+      // Calculate desired score based on relative preference
+      const maxWins = Math.max(...statWins);
+      const preferenceRatio = wins / maxWins;
+      
+      // Map preference ratio to stat range (6-16)
+      let targetScore;
+      if (preferenceRatio >= 0.9) {
+        targetScore = 16; // Very high preference
+      } else if (preferenceRatio >= 0.7) {
+        targetScore = 15; // High preference  
+      } else if (preferenceRatio >= 0.5) {
+        targetScore = 14; // Medium-high preference
+      } else if (preferenceRatio >= 0.3) {
+        targetScore = 13; // Medium preference
+      } else if (preferenceRatio >= 0.15) {
+        targetScore = 12; // Low-medium preference
+      } else {
+        targetScore = 10; // Low preference
+      }
+      
+      // Find the cost for this target score
+      const targetOption = STAT_TABLE.find(opt => opt.score === targetScore);
+      if (targetOption) {
+        finalScores[statIndex] = targetOption.score;
+        currentCosts[statIndex] = targetOption.cost;
+        totalCost += targetOption.cost;
+        remainingBudget -= targetOption.cost;
       }
     }
-
-    finalScores[i] = bestScore;
-    currentCosts[i] = bestCost;
-    totalCost += bestCost;
   }
-
-  // Adjust to make total cost exactly 27
-  while (totalCost !== 27) {
+  
+  // Balance the budget to exactly 27 points
+  while (totalCost !== 27 && remainingBudget !== 0) {
     let adjusted = false;
-
-    for (let i = 0; i < 6 && totalCost !== 27; i++) {
-      const currentScore = finalScores[i];
-      const currentCost = currentCosts[i];
-
-      // Try increasing stat if under budget
-      if (totalCost < 27) {
-        for (const option of STAT_TABLE) {
-          if (option.score > currentScore) {
-            const costDiff = option.cost - currentCost;
-            if (totalCost + costDiff <= 27) {
-              finalScores[i] = option.score;
-              totalCost += costDiff;
-              currentCosts[i] = option.cost;
-              adjusted = true;
-              break;
-            }
-          }
-        }
-      }
-      // Try decreasing stat if over budget
-      else if (totalCost > 27) {
-        // Search from highest to lowest scores for decreasing
-        for (let j = STAT_TABLE.length - 1; j >= 0; j--) {
-          const option = STAT_TABLE[j];
-          if (option.score < currentScore) {
-            const costDiff = currentCost - option.cost;
-            if (totalCost - costDiff >= 27) {
-              finalScores[i] = option.score;
-              totalCost -= costDiff;
-              currentCosts[i] = option.cost;
-              adjusted = true;
-              break;
-            }
+    
+    // If under budget, increase stats (prioritize highest preference)
+    if (totalCost < 27) {
+      for (const statIndex of statIndices) {
+        const currentScore = finalScores[statIndex];
+        const currentCost = currentCosts[statIndex];
+        
+        // Find next higher score option
+        const nextOption = STAT_TABLE.find(opt => opt.score > currentScore);
+        if (nextOption) {
+          const costIncrease = nextOption.cost - currentCost;
+          if (totalCost + costIncrease <= 27) {
+            finalScores[statIndex] = nextOption.score;
+            currentCosts[statIndex] = nextOption.cost;
+            totalCost += costIncrease;
+            adjusted = true;
+            break;
           }
         }
       }
     }
-
-    if (!adjusted) break; // Failsafe to prevent infinite loop
+    // If over budget, decrease stats (prioritize lowest preference)
+    else if (totalCost > 27) {
+      for (let i = statIndices.length - 1; i >= 0; i--) {
+        const statIndex = statIndices[i];
+        const currentScore = finalScores[statIndex];
+        const currentCost = currentCosts[statIndex];
+        
+        // Find next lower score option
+        const prevOption = STAT_TABLE.slice().reverse().find(opt => opt.score < currentScore);
+        if (prevOption) {
+          const costDecrease = currentCost - prevOption.cost;
+          if (totalCost - costDecrease >= 27) {
+            finalScores[statIndex] = prevOption.score;
+            currentCosts[statIndex] = prevOption.cost;
+            totalCost -= costDecrease;
+            adjusted = true;
+            break;
+          }
+        }
+      }
+    }
+    
+    if (!adjusted) break; // Prevent infinite loop
   }
-
+  
   return { scores: finalScores, costs: currentCosts, totalCost };
 }
 
