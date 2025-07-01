@@ -88,7 +88,7 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
           const option = STAT_TABLE[j];
           if (option.score < currentScore) {
             const costDiff = currentCost - option.cost;
-            if (totalCost - costDiff >= 27) {
+            if (totalCost - costDiff <= 27) {
               finalScores[i] = option.score;
               totalCost -= costDiff;
               currentCosts[i] = option.cost;
@@ -107,8 +107,14 @@ export function generateStatSpread(statWins: number[]): { scores: number[], cost
 }
 
 export function formatResults(statWins: number[]): StatResult[] {
-  const { scores, costs } = generateStatSpread(statWins);
+  const { scores, costs, totalCost } = generateStatSpread(statWins);
   const totalWins = statWins.reduce((sum, wins) => sum + wins, 0);
+
+  // Debug logging to help identify issues
+  console.log('StatWins:', statWins);
+  console.log('Generated scores:', scores);
+  console.log('Costs:', costs);
+  console.log('Total cost:', totalCost);
 
   return STAT_NAMES.map((name, index) => ({
     name,
